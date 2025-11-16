@@ -47,11 +47,12 @@ impl Stream {
                 .on_retry(|attempt, _, e| {
                     let error = format!("{}", e);
                     let tx = tx.clone();
+                    let tid = track.id.clone();
                     async move {
                         tracing::warn!(
                             "Attempt {} to load track {:?} failed: {}",
                             attempt,
-                            track.id.clone(),
+                            tid,
                             error
                         );
                         Self::send_event(&tx, StreamEvent::Retry {
