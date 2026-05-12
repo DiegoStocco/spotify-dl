@@ -47,6 +47,7 @@ USAGE:
     spotify-dl.exe [FLAGS] [OPTIONS] <tracks>...
 
 FLAGS:
+    -A, --auto-path  Save tracks in folder in <author>/ or <author>/<album>
     -F, --force      Force download even if the file already exists
     -h, --help       Prints help information
     -V, --version    Prints version information
