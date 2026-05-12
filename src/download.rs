@@ -31,10 +31,11 @@ pub struct DownloadOptions {
     pub parallel: usize,
     pub format: Format,
     pub force: bool,
+    pub autopath: bool,
 }
 
 impl DownloadOptions {
-    pub fn new(destination: Option<String>, parallel: usize, format: Format, force: bool) -> Self {
+    pub fn new(destination: Option<String>, parallel: usize, format: Format, force: bool, autopath: bool) -> Self {
         let destination =
             destination.map_or_else(|| std::env::current_dir().unwrap(), PathBuf::from);
         DownloadOptions {
@@ -42,6 +43,7 @@ impl DownloadOptions {
             parallel,
             format,
             force,
+            autopath,
         }
     }
 }
@@ -73,13 +75,24 @@ impl Downloader {
         let metadata = track.metadata(&self.session).await?;
         tracing::info!("Downloading track: {:?}", metadata.track_name);
 
-        let path = options
-            .destination
-            .join(metadata.to_string())
-            .with_extension(options.format.extension())
-            .to_str()
-            .ok_or(anyhow::anyhow!("Could not set the output path"))?
-            .to_string();
+        let path = match options.autopath {
+            true => options
+                .destination
+                .join(metadata.artists[0].name.clone())
+                .join(metadata.album.name.clone())
+                .join(metadata.track_name.clone())
+                .with_extension(options.format.extension())
+                .to_str()
+                .ok_or(anyhow::anyhow!("Could not set the output path"))?
+                .to_string(),
+            false => options
+                .destination
+                .join(metadata.to_string())
+                .with_extension(options.format.extension())
+                .to_str()
+                .ok_or(anyhow::anyhow!("Could not set the output path"))?
+                .to_string(),
+        };
 
         if !options.force && PathBuf::from(&path).exists() {
             tracing::info!(

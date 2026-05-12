@@ -42,6 +42,12 @@ struct Opt {
         help = "Force download even if the file already exists"
     )]
     force: bool,
+    #[structopt(
+        short = "A",
+        long = "autopath",
+        help = "Save tracks in folder in <author>/<album>"
+    )]
+    autopath: bool,
 }
 
 pub fn create_destination_if_required(destination: Option<String>) -> anyhow::Result<()> {
@@ -74,7 +80,7 @@ async fn main() -> anyhow::Result<()> {
     downloader
         .download_tracks(
             track,
-            &DownloadOptions::new(opt.destination, opt.parallel, opt.format, opt.force),
+            &DownloadOptions::new(opt.destination, opt.parallel, opt.format, opt.force, opt.autopath),
         )
         .await
 }
