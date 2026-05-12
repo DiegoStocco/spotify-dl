@@ -118,11 +118,14 @@ impl Track {
             })
         });
 
+        let track_number = metadata.number as u16;
+
         Ok(TrackMetadata::from(
             metadata,
             artists,
             album,
             image_retriever,
+            track_number,
         ))
     }
 }
@@ -203,6 +206,7 @@ pub struct TrackMetadata {
     pub track_name: String,
     pub album: AlbumMetadata,
     pub duration: i32,
+    pub track_number: u16,
     image_retriever: AsyncFn<Bytes>,
 }
 
@@ -212,6 +216,7 @@ impl TrackMetadata {
         artists: Vec<librespot::metadata::Artist>,
         album: librespot::metadata::Album,
         image_retriever: AsyncFn<Bytes>,
+        track_number: u16,
     ) -> Self {
         let artists = artists
             .iter()
@@ -225,6 +230,7 @@ impl TrackMetadata {
             album,
             duration: track.duration,
             image_retriever,
+            track_number,
         }
     }
 
@@ -243,6 +249,7 @@ impl TrackMetadata {
             artists: self.artists.iter().map(|a| a.name.clone()).collect(),
             album_title: self.album.name.clone(),
             album_cover: (self.image_retriever)().await,
+            track_number: self.track_number,
         };
         Ok(tags)
     }

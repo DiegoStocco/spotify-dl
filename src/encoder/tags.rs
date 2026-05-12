@@ -11,6 +11,7 @@ pub struct Tags {
     pub artists: Vec<String>,
     pub album_title: String,
     pub album_cover: Option<Bytes>,
+    pub track_number: u16,
 }
 
 pub async fn store_tags(path: String, tags: &Tags, format: Format) -> Result<()> {
@@ -40,6 +41,8 @@ pub async fn store_tags(path: String, tags: &Tags, format: Format) -> Result<()>
             audiotags::MimeType::Jpeg,
         ));
     }
+
+    tag.set_track_number(tags.track_number);
 
     tag.write_to_path(&path)?;
     Ok(())
