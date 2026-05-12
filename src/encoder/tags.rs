@@ -12,6 +12,7 @@ pub struct Tags {
     pub album_title: String,
     pub album_cover: Option<Bytes>,
     pub track_number: u16,
+    pub total_tracks: u16,
 }
 
 pub async fn store_tags(path: String, tags: &Tags, format: Format) -> Result<()> {
@@ -43,6 +44,7 @@ pub async fn store_tags(path: String, tags: &Tags, format: Format) -> Result<()>
     }
 
     tag.set_track_number(tags.track_number);
+    tag.set_total_tracks(tags.total_tracks);
 
     tag.write_to_path(&path)?;
     Ok(())

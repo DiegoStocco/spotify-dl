@@ -119,6 +119,7 @@ impl Track {
         });
 
         let track_number = metadata.number as u16;
+        let total_traks = album.tracks().count() as u16;
 
         Ok(TrackMetadata::from(
             metadata,
@@ -126,6 +127,7 @@ impl Track {
             album,
             image_retriever,
             track_number,
+            total_traks,
         ))
     }
 }
@@ -207,6 +209,7 @@ pub struct TrackMetadata {
     pub album: AlbumMetadata,
     pub duration: i32,
     pub track_number: u16,
+    pub total_tracks: u16,
     image_retriever: AsyncFn<Bytes>,
 }
 
@@ -217,6 +220,7 @@ impl TrackMetadata {
         album: librespot::metadata::Album,
         image_retriever: AsyncFn<Bytes>,
         track_number: u16,
+        total_tracks: u16,
     ) -> Self {
         let artists = artists
             .iter()
@@ -231,6 +235,7 @@ impl TrackMetadata {
             duration: track.duration,
             image_retriever,
             track_number,
+            total_tracks,
         }
     }
 
@@ -250,6 +255,7 @@ impl TrackMetadata {
             album_title: self.album.name.clone(),
             album_cover: (self.image_retriever)().await,
             track_number: self.track_number,
+            total_tracks: self.total_tracks,
         };
         Ok(tags)
     }
