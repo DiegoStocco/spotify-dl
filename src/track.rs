@@ -121,6 +121,9 @@ impl Track {
         let track_number = metadata.number as u16;
         let total_traks = album.tracks().count() as u16;
 
+        let disc_number = metadata.disc_number as u16;
+        let total_discs = album.discs.len() as u16;
+
         Ok(TrackMetadata::from(
             metadata,
             artists,
@@ -128,6 +131,8 @@ impl Track {
             image_retriever,
             track_number,
             total_traks,
+            disc_number,
+            total_discs,
         ))
     }
 }
@@ -210,6 +215,8 @@ pub struct TrackMetadata {
     pub duration: i32,
     pub track_number: u16,
     pub total_tracks: u16,
+    pub disc_number: u16,
+    pub total_discs: u16,
     image_retriever: AsyncFn<Bytes>,
 }
 
@@ -221,6 +228,8 @@ impl TrackMetadata {
         image_retriever: AsyncFn<Bytes>,
         track_number: u16,
         total_tracks: u16,
+        disc_number: u16,
+        total_discs: u16,
     ) -> Self {
         let artists = artists
             .iter()
@@ -236,6 +245,8 @@ impl TrackMetadata {
             image_retriever,
             track_number,
             total_tracks,
+            disc_number,
+            total_discs,
         }
     }
 
@@ -256,6 +267,8 @@ impl TrackMetadata {
             album_cover: (self.image_retriever)().await,
             track_number: self.track_number,
             total_tracks: self.total_tracks,
+            disc_number: self.disc_number,
+            total_discs: self.total_discs,
         };
         Ok(tags)
     }
